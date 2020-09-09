@@ -2,41 +2,47 @@ package models;
 
 public class Move {
 
-	public Move(Player player, int moveX, int moveY) {
-		super();
-		this.player = player;
-		this.moveX = moveX;
-		this.moveY = moveY;
-	}
+  /**
+   * A Move must be made by a player to a spot in the 3x3 grid.
+   *
+   * @param player The player performing the move
+   * @param moveX The x-coordinate of the move
+   * @param moveY The y-coordinate of the move
+   */
+  public Move(Player player, int moveX, int moveY) {
+    super();
+    this.player = player;
+    this.moveX = moveX;
+    this.moveY = moveY;
+  }
 
-	private Player player;
-	
-	private int moveX;
-	
-	private int moveY;
+  private Player player;
 
-	public Player getPlayer() {
-		return player;
-	}
+  private int moveX;
 
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
+  private int moveY;
 
-	public int getMoveX() {
-		return moveX;
-	}
+  public Player getPlayer() {
+    return player;
+  }
 
-	public void setMoveX(int moveX) {
-		this.moveX = moveX;
-	}
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
 
-	public int getMoveY() {
-		return moveY;
-	}
+  public int getMoveX() {
+    return moveX;
+  }
 
-	public void setMoveY(int moveY) {
-		this.moveY = moveY;
-	}
+  public void setMoveX(int moveX) {
+    this.moveX = moveX;
+  }
 
+  public int getMoveY() {
+    return moveY;
+  }
+
+  public void setMoveY(int moveY) {
+    this.moveY = moveY;
+  }
 }

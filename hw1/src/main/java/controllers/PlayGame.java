@@ -22,13 +22,16 @@ public class PlayGame {
   private static boolean isDraw(char[][] boardState) {
     for (int x = 0; x < boardState.length; x++) {
       for (int y = 0; y < boardState[x].length; y++) {
-        if (boardState[x][y] == '\u0000') return false;
+        if (boardState[x][y] == '\u0000') {
+          return false;
+        }
       }
     }
     return true;
   }
 
-  // Goes over the rows and then the columns, and finally, diagonals, to determine possible winner or draw
+  // Goes over the rows and then the columns, and finally, diagonals, to determine possible winner
+  // or draw
   private static int getBoardStatus(char[][] boardState, int x, int y) {
     for (int row = 0; row < 3; row++) {
       if (boardState[row][0] == boardState[row][1] && boardState[row][1] == boardState[row][2]) {
@@ -60,11 +63,15 @@ public class PlayGame {
       } else if (boardState[0][2] == 'O') {
         return y;
       }
-    } else if (isDraw(boardState)) return -1;
+    } else if (isDraw(boardState)) {
+      return -1;
+    }
     return 0;
   }
 
-  /** Main method of the application.
+  /**
+   * Main method of the application.
+   *
    * @param args Command line arguments
    */
   public static void main(String[] args) {
@@ -109,7 +116,8 @@ public class PlayGame {
           ctx.json(board);
         });
 
-    // Joins a game if there is one. Undefined behavior when joining an existing game with two players.
+    // Joins a game if there is one. Undefined behavior when joining an existing game with two
+    // players.
     app.get(
         "/joingame",
         ctx -> {
@@ -196,7 +204,9 @@ public class PlayGame {
     app.ws("/gameboard", new UiWebSocket());
   }
 
-  /** Send message to all players.
+  /**
+   * Send message to all players.
+   *
    * @param gameBoardJson Gameboard JSON
    * @throws IOException Websocket message send IO Exception
    */
