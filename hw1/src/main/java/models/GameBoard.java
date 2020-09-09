@@ -2,18 +2,86 @@ package models;
 
 public class GameBoard {
 
-  private Player p1;
+	public GameBoard(Player p1, Player p2, boolean gameStarted, int turn, char[][] boardState, int winner,
+			boolean isDraw) {
+		super();
+		this.p1 = p1;
+		this.p2 = p2;
+		this.gameStarted = gameStarted;
+		this.turn = turn;
+		this.boardState = boardState;
+		this.winner = winner;
+		this.isDraw = isDraw;
+	}
 
-  private Player p2;
+	private Player p1;
+	
+	private Player p2;
+	
+	private boolean gameStarted;
 
-  private boolean gameStarted;
+	private int turn;
+	
+	private char[][] boardState;
+	
+	private int winner;
+	
+	private boolean isDraw;
 
-  private int turn;
+	public Player getP1() {
+		return p1;
+	}
 
-  private char[][] boardState;
+	public void setP1(Player p1) {
+		this.p1 = p1;
+	}
 
-  private int winner;
+	public Player getP2() {
+		return p2;
+	}
 
-  private boolean isDraw;
+	public void setP2(Player p2) {
+		this.p2 = p2;
+	}
 
+	public boolean isGameStarted() {
+		return gameStarted;
+	}
+
+	public void setGameStarted(boolean gameStarted) {
+		this.gameStarted = gameStarted;
+	}
+
+	public int getTurn() {
+		return turn;
+	}
+
+	public void setTurn(int turn) {
+		this.turn = turn;
+	}
+
+	public char[][] getBoardState() {
+		return boardState;
+	}
+
+	public void setBoardState(char[][] boardState) {
+		this.boardState = boardState;
+	}
+
+	public int getWinner() {
+		return winner;
+	}
+
+	public void setWinner(int winner) {
+		this.winner = winner;
+	}
+
+	public boolean isDraw() {
+		return isDraw;
+	}
+
+	public void setDraw(boolean isDraw) {
+		this.isDraw = isDraw;
+	}
+	
 }
