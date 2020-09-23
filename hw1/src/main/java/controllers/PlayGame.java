@@ -3,7 +3,6 @@ package controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.javalin.Javalin;
-import io.javalin.plugin.json.JavalinJson;
 import java.io.IOException;
 import java.util.Queue;
 import models.GameBoard;
@@ -86,8 +85,6 @@ public class PlayGame {
             .start(PORT_NUMBER);
 
     Gson gson = new GsonBuilder().create();
-    JavalinJson.setFromJsonMapper(gson::fromJson);
-    JavalinJson.setToJsonMapper(gson::toJson);
 
     // Test Echo Server
     app.post(
@@ -115,7 +112,7 @@ public class PlayGame {
             {'\u0000', '\u0000', '\u0000'}
           };
           board = new GameBoard(p1, null, false, 1, boardState, 0, false);
-          ctx.json(board);
+          ctx.result(gson.toJson(board));
         });
 
     // Joins a game if there is one. Undefined behavior when joining an existing game with two
@@ -178,11 +175,9 @@ public class PlayGame {
             }
             char[][] boardState = board.getBoardState();
             char type = mover.getType();
-            if (board.getTurn() == 1 && mover.getId() == 2) {
-              throw new IOException("Player 1 did not move first");
-            } else if ((board.getTurn() % 2 == 0 && mover.getId() == 1)
+            if ((board.getTurn() % 2 == 0 && mover.getId() == 1)
                 || (board.getTurn() % 2 == 1 && mover.getId() == 2)) {
-              throw new IOException("Player cannot make two moves in their turn");
+              throw new IOException("It is not your move!");
             } else if (boardState[move.getMoveX()][move.getMoveY()] != '\u0000') {
               throw new IOException("Please make a legal move");
             }
@@ -198,12 +193,12 @@ public class PlayGame {
             code = 100;
             message = "";
             board.setTurn(board.getTurn() == 1 ? 2 : 1);
-            ctx.json(new Message(moveValidity, code, message));
+            ctx.result(gson.toJson(new Message(moveValidity, code, message)));
           } catch (IOException e) {
             moveValidity = false;
             code = 200;
             message = e.getMessage();
-            ctx.json(new Message(moveValidity, code, message));
+            ctx.result(gson.toJson(new Message(moveValidity, code, message)));
           }
           sendGameBoardToAllPlayers(gson.toJson(board));
         });
