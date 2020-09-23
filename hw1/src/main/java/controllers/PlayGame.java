@@ -1,14 +1,16 @@
 package controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.javalin.Javalin;
 import io.javalin.plugin.json.JavalinJson;
 import java.io.IOException;
 import java.util.Queue;
+import models.GameBoard;
+import models.Message;
+import models.Move;
+import models.Player;
 import org.eclipse.jetty.websocket.api.Session;
-
-import models.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class PlayGame {
 
@@ -78,9 +80,9 @@ public class PlayGame {
 
     app =
         Javalin.create(
-                config -> {
-                  config.addStaticFiles("/public");
-                })
+            config -> {
+              config.addStaticFiles("/public");
+            })
             .start(PORT_NUMBER);
 
     Gson gson = new GsonBuilder().create();
@@ -124,8 +126,11 @@ public class PlayGame {
           try {
             char p1Type = board.getP1().getType();
             Player p2;
-            if (p1Type == 'X') p2 = new Player('O', 2);
-            else p2 = new Player('X', 2);
+            if (p1Type == 'X') {
+              p2 = new Player('O', 2);
+            } else {
+              p2 = new Player('X', 2);
+            }
             board.setP2(p2);
             board.setGameStarted(true);
             ctx.redirect("tictactoe.html?p=2");
@@ -140,18 +145,26 @@ public class PlayGame {
         "/move/:playerId",
         ctx -> {
           String playerId = ctx.pathParam("playerId");
-          int x = Integer.parseInt(ctx.formParam("x"));
-          int y = Integer.parseInt(ctx.formParam("y"));
-          int xPlayer;
-          int yPlayer;
-
+          int xplayer;
+          int yplayer;
           if (board.getP1().getType() == 'X') {
-            xPlayer = 1;
-            yPlayer = 2;
+            xplayer = 1;
+            yplayer = 2;
           } else {
-            xPlayer = 2;
-            yPlayer = 1;
+            xplayer = 2;
+            yplayer = 1;
           }
+          Player mover;
+          if (playerId.equals("1")) {
+            mover = board.getP1();
+          } else {
+            mover = board.getP2();
+          }
+          Move move =
+              new Move(
+                  mover,
+                  Integer.parseInt(ctx.formParam("x")),
+                  Integer.parseInt(ctx.formParam("y")));
 
           boolean moveValidity;
           int code;
@@ -164,23 +177,18 @@ public class PlayGame {
               throw new IOException("The game is already over");
             }
             char[][] boardState = board.getBoardState();
-            char type;
-            if (playerId.equals("1")) {
-              type = board.getP1().getType();
-            } else {
-              type = board.getP2().getType();
-            }
-            if (board.getTurn() == 1 && playerId.equals("2")) {
+            char type = mover.getType();
+            if (board.getTurn() == 1 && mover.getId() == 2) {
               throw new IOException("Player 1 did not move first");
-            } else if ((board.getTurn() % 2 == 0 && playerId.equals("1"))
-                || (board.getTurn() % 2 == 1 && playerId.equals("2"))) {
+            } else if ((board.getTurn() % 2 == 0 && mover.getId() == 1)
+                || (board.getTurn() % 2 == 1 && mover.getId() == 2)) {
               throw new IOException("Player cannot make two moves in their turn");
-            } else if (boardState[x][y] != '\u0000') {
+            } else if (boardState[move.getMoveX()][move.getMoveY()] != '\u0000') {
               throw new IOException("Please make a legal move");
             }
-            boardState[x][y] = type;
+            boardState[move.getMoveX()][move.getMoveY()] = type;
             board.setBoardState(boardState);
-            int status = getBoardStatus(boardState, xPlayer, yPlayer);
+            int status = getBoardStatus(boardState, xplayer, yplayer);
             if (status == -1) {
               board.setDraw(true);
             } else if (status > 0) {
